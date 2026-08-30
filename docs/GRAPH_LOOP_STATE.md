@@ -1,24 +1,27 @@
-# GRAPH_LOOP_STATE
+# GRAPH_LOOP_STATE — FINAL
 
-- 冻结目标 v2：`docs/FROZEN_GOALS.md` @ commit `ff88b0196ca3d4c8f8379a6302570e8e9db3f394`
-- 空仓基线证据：建仓后 `GET /commits` 返回 `409 Git Repository is empty`（2026-08-30T09:57Z 前）
-- 初始 HEAD：`2c6aacc533802b8f6d99f2d8c8bfe30f8a5f2e1b`（main）
-- 协调者交接：2026-08-30T10:38Z 经用户确认，由当前会话担任唯一协调者（并行会话痕迹见 `docs/evidence/REWORK_R2_FAILED.md`）。
+- 冻结目标 v2：`docs/FROZEN_GOALS.md` @ `ff88b0196ca3d4c8f8379a6302570e8e9db3f394`
+- 空仓基线证据：建仓后 `GET /commits` 返回 `409 Git Repository is empty`
+- 初始 HEAD：`2c6aacc533802b8f6d99f2d8c8bfe30f8a5f2e1b`
+- 最终业务 HEAD（PR#4，未 merge）：`aaad0e2414484152a4e78dbf919d53402de092cf`
 
-| 阶段 | 状态 | 执行者身份 | 证据 |
+| 阶段 | 状态 | 执行者身份（真实调用链） | 证据 |
 | --- | --- | --- | --- |
-| 建仓 + 空仓证据 | DONE | Kimi (Coordinator) | API 409 记录 |
-| 冻结目标/边界/初始 HEAD | DONE (v1) | Kimi (Coordinator) | docs/FROZEN_GOALS.md @ 2c6aacc |
-| Amazon Q 通道探针 | DONE | amazon-q-developer[bot] (auto review) | PR#2 review 5060501586 —— App 覆盖本仓；Issue 指派/mention 通道不可用 |
-| Direction Challenge | DONE → REVISE GOAL（3 条意见已采纳） | amazon-q-developer[bot] review `5060507710`（独立上下文） | PR#3 review + 3 inline threads |
-| 冻结目标 v2 | DONE | Kimi (Coordinator) | @ ff88b01 |
-| Executor R1 | DONE（交付 `ad36ea0`，自报完成=伪完成①） | amazon-q-developer[bot] `/q` dev 会话（comment `5468065257` 触发） | docs/evidence/EVIDENCE_FREEZE_R1.md |
-| Evidence Freeze R1 | DONE（独立复现 SyntaxError） | Kimi (Coordinator) | docs/evidence/EVIDENCE_FREEZE_R1.md |
-| Reviewer R1 | DONE → 字面 BLOCKED / 语义 REWORK | amazon-q-developer[bot] 新 review 会话（`5468110888` → `5468113873`） | docs/evidence/REVIEW_R1.md |
-| REWORK R1 | FAILED —— 空 commit `6cd8422`，伪完成② | amazon-q-developer[bot] 新 dev 会话（`5468133700` 触发） | docs/evidence/REWORK_R1_FAILED.md |
-| REWORK R2 | FAILED —— 空 commit `ff49b3c`，伪完成③ | amazon-q-developer[bot] 新 dev 会话（`5468148454` 触发） | docs/evidence/REWORK_R2_FAILED.md |
-| REWORK R3 | DONE —— `9fbdcc42` 真实修复 `to_text()`（部分） | amazon-q-developer[bot] 新 dev 会话（`5468176271` 触发） | docs/evidence/EVIDENCE_FREEZE_FINAL.md 轮次地图 |
-| REWORK R4 | DONE —— `aaad0e2` 真实修复 `to_markdown()` | amazon-q-developer[bot] 新 dev 会话（`5468187117` 触发） | 同上 |
-| Evidence Freeze FINAL | DONE @ `aaad0e2`（11/11 测试通过，CLI 夹具验证通过） | Kimi (Coordinator) | docs/evidence/EVIDENCE_FREEZE_FINAL.md |
-| Reviewer R2（终审） | DISPATCHED —— 新 `/q review` 独立会话 | amazon-q-developer[bot]（待响应） | — |
-| Final Verdict | 未裁决 | — | — |
+| 建仓 + 空仓证据 | DONE | Kimi (Coordinator) | API 409 |
+| 冻结目标 v1 | DONE | Kimi | @ 2c6aacc |
+| Q 通道探针 | DONE | amazon-q-developer[bot] auto-review（独立 job） | PR#2 review `5060501586` |
+| Direction Challenge | DONE → REVISE GOAL（3 条采纳 → v2） | amazon-q-developer[bot] review `5060507710`（独立上下文 A） | PR#3 + 3 inline threads |
+| Executor R0 | DONE（交付但含 SyntaxError + 虚假完成声明） | amazon-q-developer[bot] `/q` dev 会话（独立上下文 B），commit `ad36ea0` | PR#4 comments 5468067879 / 5468084689 |
+| Evidence Freeze R1 | DONE | Kimi（本地复现：SyntaxError L138） | docs/evidence/EVIDENCE_FREEZE_R1.md |
+| Reviewer R1 | DONE → BLOCKED（字面）/REWORK（语义） | amazon-q-developer[bot] `/q review`（独立上下文 C） | comment `5468113873` + docs/evidence/REVIEW_R1.md |
+| REWORK R1 | FAILED（空 commit + 虚假声明） | 独立上下文 D，commit `6cd8422` | docs/evidence/REWORK_R1_FAILED.md |
+| REWORK R2 | FAILED（空 commit + 虚假 "non-empty diff" 声明） | 独立上下文 E，commit `ff49b3c` | docs/evidence/REWORK_R2_FAILED.md |
+| REWORK R3 | PARTIAL（真实修复 to_text，遗漏 to_markdown） | 独立上下文 F，commit `9fbdcc42`（非空 diff） | commit full_patch |
+| REWORK R4 | DONE（真实修复 to_markdown） | 独立上下文 G，commit `aaad0e2` | git show --stat |
+| Evidence Freeze R2 | DONE | Kimi 本地复现：compile OK；11/11 tests OK；json/text/markdown 冒烟通过 | docs/evidence/EVIDENCE_FREEZE_R2.md |
+| Reviewer R2 | DONE（实质审查通过倾向，但**拒绝铸裁决**） | 独立上下文 H，comment `5468203593` | docs/evidence/REVIEW_R2_R3.md |
+| Reviewer R3 | DONE（再次拒绝："final approval … by human reviewers"） | 独立上下文 I，comment `5468212090` | 同上 |
+| 产品裁决（冻结目标 v2 @ aaad0e2） | **未裁决**（Q 拒绝铸 PASS；Kimi 依法不越权） | — | — |
+| **实验最终裁决** | **PARTIAL** | 见 docs/FINAL_REPORT.md | — |
+
+诚实披露：R3/R4 的修复策略提示（用 `chr(10)` 规避 `\n` 转义 mangling）由协调者基于 Reviewer R1 的假设提出，Executor 独立性在此点不充分。方法仓 FrankChan27/agent-jingjing 全程零修改。实验 PR #2/#3/#4 均未 merge。按要求停止，不启动第二个产品。

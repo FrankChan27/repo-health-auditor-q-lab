@@ -135,7 +135,7 @@ def to_text(data):
     out.append("")
     out.append(f"Health Score: {data['score']}")
     out.append("=" * 60)
-    return "
+    return chr(10).join(out)
 
 def to_markdown(data):
     out = []

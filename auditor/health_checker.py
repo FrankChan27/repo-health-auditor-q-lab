@@ -170,7 +170,7 @@ def to_markdown(data):
     
     out.append("")
     out.append(f"**Health Score:** {data['score']}")
-    return "
+    return chr(10).join(out)
 
 def run():
     parser = argparse.ArgumentParser(description='Check repository health')
